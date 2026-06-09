@@ -1,0 +1,119 @@
+/* ── HEADER ─────────────────────────────────────── */
+header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  border-bottom: 1px solid var(--border);
+  height: 70px;
+  display: flex; align-items: center;
+}
+/* El fondo glass va en un pseudo-elemento para que el `header` NO sea bloque
+   contenedor de sus hijos `position: fixed` (el menú móvil se ancla al viewport). */
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(69, 69, 69, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  z-index: -1;
+}
+.header-inner {
+  width: 100%; max-width: 1400px; margin: 0 auto;
+  padding: 0 5vw;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.header-actions {
+  display: flex; align-items: center; gap: 16px;
+}
+.logo {
+  font-family: var(--font-caps);
+  font-size: 2rem;
+  letter-spacing: 0.22em;
+  color: var(--snow);
+  text-decoration: none;
+  position: relative;
+}
+.logo span { color: var(--gold); }
+.logo::after {
+  content: '®';
+  font-size: 0.55rem;
+  vertical-align: super;
+  color: var(--gold);
+  margin-left: 2px;
+}
+nav { display: flex; gap: 2.5rem; align-items: center; }
+nav a {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(250,250,250,0.65);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+nav a::after {
+  content: '';
+  position: absolute; bottom: -4px; left: 0; right: 0;
+  height: 1px; background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.25s;
+}
+nav a:hover { color: var(--snow); }
+nav a:hover::after { transform: scaleX(1); }
+nav a.active { color: var(--gold); }
+nav a.active::after { transform: scaleX(1); background: var(--gold); }
+.cart-btn {
+  background: var(--black);
+  color: var(--gold);
+  border: none; cursor: pointer;
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.15s;
+  position: relative;
+}
+.cart-btn:hover { background: var(--gold); color: var(--black); transform: scale(1.06); }
+.cart-btn svg { width: 20px; height: 20px; }
+.cart-count {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--gold); color: var(--black);
+  font-size: 0.6rem; font-weight: 600;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.hamburger {
+  display: none;
+  flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.hamburger span {
+  display: block; width: 24px; height: 1.5px; background: var(--snow);
+  transition: all 0.25s;
+}
+
+/* Hamburguesa → X cuando el menú está abierto */
+.hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 900px) {
+  nav { display: none; }
+  nav.open {
+    display: flex; flex-direction: column; align-items: flex-start;
+    position: fixed; top: 70px; left: 0; right: 0;
+    /* Altura explícita: el header tiene backdrop-filter y actúa como bloque
+       contenedor de los hijos fixed, así que NO podemos confiar en bottom:0.
+       Fijamos la altura del viewport menos el header para cubrir toda la pantalla. */
+    height: calc(100vh - 70px);
+    height: calc(100dvh - 70px);
+    background: #1c1c1c;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 3rem 8vw; gap: 2rem; z-index: 99;
+    overflow-y: auto;
+  }
+  nav.open a { font-size: 1.3rem; letter-spacing: 0.08em; color: rgba(255,255,255,0.85); }
+  nav.open a:hover { color: var(--gold); }
+  .hamburger { display: flex; }
+}

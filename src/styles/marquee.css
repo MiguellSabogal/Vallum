@@ -1,0 +1,24 @@
+/* ── MARQUEE STRIP ───────────────────────────────── */
+.marquee-strip {
+  background: var(--gold);
+  padding: 13px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative; z-index: 1;
+}
+.marquee-track {
+  display: inline-flex; gap: 0;
+  animation: marquee 30s linear infinite;
+}
+.marquee-track span {
+  font-family: var(--font-caps);
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--black);
+  padding: 0 2rem;
+}
+.marquee-track span.dot { opacity: 0.4; padding: 0 0.5rem; }
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}

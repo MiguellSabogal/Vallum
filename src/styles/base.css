@@ -1,0 +1,78 @@
+/* ── RESET ───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── VARIABLES GLOBALES ──────────────────────────── */
+:root {
+  --snow: #FFEB94;
+  --black: #2f2f2f;
+  --gold: #dcc97d;
+  --gold-dim: #D9C560;
+  --rose: #FFCCAC;
+  --mid: #E8D8C0;
+  --light-gray: #FFEB94;
+  --border: rgba(237,212,117,0.25);
+  --font-display: 'Cormorant Garamond', serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-caps: 'Bebas Neue', sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: #D9E8E4;
+  color: var(--black);
+  font-family: var(--font-body);
+  font-weight: 400;
+  overflow-x: hidden;
+}
+
+/* ── CANVAS 3D GLOBAL ────────────────────────────── */
+#global-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+/* ── SECCIONES COMPARTIDAS ───────────────────────── */
+section { padding: 100px 5vw; }
+.section-inner { max-width: 1400px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--gold); font-weight: 500;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 1.5rem;
+}
+.section-eyebrow::before {
+  content: ''; display: block;
+  width: 32px; height: 1px; background: var(--gold);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+.section-title em { font-style: italic; }
+
+/* ── UTILIDADES ──────────────────────────────────── */
+.text-gold { color: var(--gold); }
+
+/* ── ANIMACIONES DE APARICIÓN ────────────────────── */
+.fade-up {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1);
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+.fade-up:nth-child(2) { transition-delay: 0.1s; }
+.fade-up:nth-child(3) { transition-delay: 0.2s; }
+.fade-up:nth-child(4) { transition-delay: 0.3s; }
+
+/* ── RESPONSIVE GLOBAL ───────────────────────────── */
+@media (max-width: 600px) {
+  section { padding: 70px 5vw; }
+}

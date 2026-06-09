@@ -1,0 +1,171 @@
+/* ── PRODUCT GRID ────────────────────────────────── */
+.catalog { background: rgba(255,235,148,0.88); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); position: relative; z-index: 1; }
+.catalog .section-title { color: var(--black); }
+/* Páginas de colección (sin Hero arriba): despeja el header fijo */
+.catalog-page { padding-top: 140px; min-height: 100vh; }
+.catalog-subtitle {
+  max-width: 620px; margin-top: 1.2rem;
+  font-size: 0.98rem; line-height: 1.65;
+  color: rgba(26,26,26,0.6);
+}
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2px;
+  margin-top: 4rem;
+  border: 1px solid rgba(26,26,26,0.1);
+}
+.product-card {
+  background: rgba(250,250,250,0.92);
+  position: relative;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.product-card:hover { background: var(--black); }
+.product-card:hover .product-name { color: var(--snow); }
+.product-card:hover .product-house { color: rgba(250,250,250,0.45); }
+.product-card:hover .quality-label { color: rgba(250,250,250,0.6); }
+.product-card:hover .product-price { color: var(--gold); }
+.product-card:hover .add-cart-btn { background: var(--gold); color: var(--black); }
+.product-card:hover .quality-btn { border-color: rgba(250,250,250,0.2); color: rgba(250,250,250,0.5); }
+.product-card:hover .quality-btn.active { background: var(--gold); border-color: var(--gold); color: var(--black); }
+.product-card:hover .product-visual { filter: brightness(0.75) saturate(1.2); }
+
+.product-visual {
+  width: 100%; aspect-ratio: 1/1.05;
+  object-fit: cover;
+  filter: grayscale(20%) saturate(0.9);
+  transition: all 0.4s;
+}
+/* Placeholder visual when no image */
+.product-visual-placeholder {
+  width: 100%; aspect-ratio: 1/1.05;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.product-card:hover .product-visual-placeholder { background: #111; }
+.product-visual-placeholder .bottle-icon {
+  font-size: 5rem;
+  opacity: 0.08;
+  transition: opacity 0.3s;
+  user-select: none;
+  pointer-events: none;
+}
+.product-card:hover .bottle-icon { opacity: 0.06; }
+.product-visual-placeholder .perfume-name-bg {
+  position: absolute;
+  font-family: var(--font-caps);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 0.06em;
+  color: rgba(26,26,26,0.07);
+  text-align: center; padding: 0 1rem;
+  line-height: 1.15;
+  transition: color 0.3s;
+}
+.product-card:hover .perfume-name-bg { color: rgba(250,250,250,0.05); }
+.product-visual-placeholder .bottle-svg {
+  position: absolute;
+  opacity: 0.55;
+  transition: opacity 0.3s, transform 0.4s;
+}
+.product-card:hover .bottle-svg { opacity: 0.4; transform: scale(1.04); }
+
+.new-badge {
+  position: absolute; top: 14px; left: 14px;
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--gold); color: var(--black);
+  padding: 4px 10px;
+}
+.product-info {
+  padding: 1.4rem 1.5rem 1.6rem;
+  flex: 1; display: flex; flex-direction: column; gap: 1.2rem;
+}
+.product-house {
+  font-size: 0.65rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(26,26,26,0.4);
+  font-weight: 500; transition: color 0.3s;
+}
+.product-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem; font-weight: 400;
+  line-height: 1.2; transition: color 0.3s;
+}
+.product-inspired {
+  margin-top: 5px;
+  font-size: 0.72rem; font-style: italic;
+  color: rgba(26,26,26,0.5);
+  transition: color 0.3s;
+}
+.product-card:hover .product-inspired { color: var(--gold); }
+/* Stars */
+.stars { display: flex; gap: 3px; }
+.stars span { color: var(--gold); font-size: 0.75rem; }
+.stars .review-count {
+  color: rgba(26,26,26,0.4); font-size: 0.7rem;
+  margin-left: 4px; font-family: var(--font-body);
+}
+.product-card:hover .stars .review-count { color: rgba(250,250,250,0.3); }
+
+/* Quality selector */
+.quality-selector { display: flex; flex-direction: column; gap: 8px; }
+.quality-label {
+  font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(26,26,26,0.45); font-weight: 500; transition: color 0.3s;
+}
+.quality-btns { display: flex; gap: 8px; }
+.quality-btn {
+  flex: 1; padding: 9px 0;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid rgba(26,26,26,0.18);
+  color: rgba(26,26,26,0.45);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.quality-btn.active {
+  background: var(--black); border-color: var(--black);
+  color: var(--snow);
+}
+.product-card:hover .quality-btn.active {
+  background: var(--gold); border-color: var(--gold); color: var(--black);
+}
+
+/* Price & CTA */
+.product-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.product-price {
+  font-family: var(--font-display);
+  font-size: 1.8rem; font-weight: 300;
+  color: var(--black); transition: color 0.3s;
+  line-height: 1;
+}
+.product-price small {
+  font-size: 0.7rem; font-weight: 400;
+  opacity: 0.5; margin-left: 2px;
+  font-family: var(--font-body);
+  vertical-align: super;
+}
+.add-cart-btn {
+  background: var(--black); color: var(--snow);
+  border: none; cursor: pointer;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 900px) {
+  .products-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+@media (max-width: 600px) {
+  .products-grid { grid-template-columns: 1fr 1fr; gap: 1px; }
+  .product-info { padding: 1rem 1rem 1.2rem; gap: 0.9rem; }
+  .product-name { font-size: 1.1rem; }
+  .product-price { font-size: 1.4rem; }
+  .add-cart-btn { font-size: 0.6rem; padding: 10px 12px; }
+}
