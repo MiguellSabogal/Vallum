@@ -14,8 +14,8 @@ export const dynamic = 'force-dynamic';
 
 // Server Component: consulta la BD directamente (sin HTTP). Los productos
 // llegan ya dentro del HTML → SEO.
-export default function HomePage() {
-  const products = getAllProducts();
+export default async function HomePage() {
+  const products = await getAllProducts();
 
   return (
     <>

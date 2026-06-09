@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import db from '../../../server/db.js';
 import { verifyBearer } from '../../../server/auth.js';
-import { placeOrder } from '../../../server/store.js';
+import { placeOrder, listOrders } from '../../../server/store.js';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -19,7 +18,7 @@ export async function POST(request) {
     return NextResponse.json({ error: 'El carrito está vacío.' }, { status: 400 });
   }
   try {
-    return NextResponse.json(placeOrder(customer, items), { status: 201 });
+    return NextResponse.json(await placeOrder(customer, items), { status: 201 });
   } catch (e) {
     if (e && e.status) return NextResponse.json({ error: e.error }, { status: e.status });
     console.error('[orders] error:', e);
@@ -28,9 +27,9 @@ export async function POST(request) {
 }
 
 // Listar pedidos (admin)
-export function GET(request) {
+export async function GET(request) {
   if (!verifyBearer(request.headers.get('authorization'))) {
     return NextResponse.json({ error: 'No autorizado.' }, { status: 401 });
   }
-  return NextResponse.json(db.prepare('SELECT * FROM orders ORDER BY id DESC').all());
+  return NextResponse.json(await listOrders());
 }

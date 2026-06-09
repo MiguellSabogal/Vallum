@@ -9,7 +9,7 @@ export async function POST(request) {
   const raw = await request.text();
   const signature = request.headers.get('x-webhook-signature') || '';
   try {
-    return NextResponse.json(processWebhook(raw, signature));
+    return NextResponse.json(await processWebhook(raw, signature));
   } catch (e) {
     if (e && e.status) return NextResponse.json({ error: e.error }, { status: e.status });
     console.error('[webhook] error:', e);

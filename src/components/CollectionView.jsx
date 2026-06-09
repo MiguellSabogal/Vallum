@@ -7,8 +7,9 @@ import ScrollReveal from './ScrollReveal.jsx';
 import { getAllProducts } from '../../server/store.js';
 
 // Server Component: consulta la BD directamente y filtra por género (SSR).
-export default function CollectionView({ gender, eyebrow, title, subtitle }) {
-  const products = getAllProducts().filter((p) => p.gender === gender);
+export default async function CollectionView({ gender, eyebrow, title, subtitle }) {
+  const all = await getAllProducts();
+  const products = all.filter((p) => p.gender === gender);
 
   return (
     <>

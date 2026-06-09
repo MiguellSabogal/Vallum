@@ -20,16 +20,17 @@ un solo proyecto). La versión Vite (`../vallum-react`) ya se puede retirar.
 
 ## Requisitos para correr
 
-Autosuficiente: un solo comando.
+Necesita una base **PostgreSQL** (local o gestionada). Configura `DATABASE_URL`.
 
 ```bash
 cd vallum-next
 npm install
-cp .env.example .env.local   # configura tus secretos
+cp .env.example .env.local   # pon tus secretos y DATABASE_URL
 npm run dev                  # http://localhost:3000  (web + API)
 ```
 
-La SQLite se crea sola en `./vallum.db` y se siembra con 8 productos y el admin.
+Al arrancar, el esquema se crea solo y se siembra con 8 productos y el admin
+(idempotente). Datos (`pg`), no SQLite: persiste en serverless y aguanta concurrencia.
 
 ## Cómo se logra el SEO
 

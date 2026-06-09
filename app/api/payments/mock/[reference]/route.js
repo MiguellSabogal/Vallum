@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import crypto from 'node:crypto';
-import db from '../../../../../server/db.js';
+import { getOrderRowByRef } from '../../../../../server/store.js';
 import { processWebhook, sign } from '../../../../../server/payments.js';
 
 export const runtime = 'nodejs';
@@ -14,7 +14,7 @@ export async function POST(request, { params }) {
   }
   const body = await request.json().catch(() => ({}));
   const outcome = body.outcome === 'rechazado' ? 'rechazado' : 'aprobado';
-  const order = db.prepare('SELECT * FROM orders WHERE reference = ?').get(params.reference);
+  const order = await getOrderRowByRef(params.reference);
   if (!order) return NextResponse.json({ error: 'Pedido no encontrado.' }, { status: 404 });
 
   const event = {
@@ -28,7 +28,7 @@ export async function POST(request, { params }) {
   };
   const raw = JSON.stringify(event);
   try {
-    return NextResponse.json(processWebhook(raw, sign(raw)));
+    return NextResponse.json(await processWebhook(raw, sign(raw)));
   } catch (e) {
     if (e && e.status) return NextResponse.json({ error: e.error }, { status: e.status });
     return NextResponse.json({ error: 'Error simulando el pago.' }, { status: 500 });
