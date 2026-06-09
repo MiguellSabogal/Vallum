@@ -7,22 +7,15 @@ import Footer from '../src/components/Footer.jsx';
 import CartDrawer from '../src/components/CartDrawer.jsx';
 import BottleSceneClient from '../src/components/BottleSceneClient.jsx';
 import ScrollReveal from '../src/components/ScrollReveal.jsx';
+import { getAllProducts } from '../server/store.js';
 
-const API_ORIGIN = process.env.API_ORIGIN || 'http://localhost:3001';
+// SSR por petición: refleja siempre el estado actual de la BD (cambios del admin).
+export const dynamic = 'force-dynamic';
 
-// Se ejecuta EN EL SERVIDOR: los productos llegan ya dentro del HTML (SEO).
-async function getProducts() {
-  try {
-    const res = await fetch(`${API_ORIGIN}/api/products`, { cache: 'no-store' });
-    if (!res.ok) return [];
-    return res.json();
-  } catch {
-    return [];
-  }
-}
-
-export default async function HomePage() {
-  const products = await getProducts();
+// Server Component: consulta la BD directamente (sin HTTP). Los productos
+// llegan ya dentro del HTML → SEO.
+export default function HomePage() {
+  const products = getAllProducts();
 
   return (
     <>

@@ -4,22 +4,11 @@ import Footer from './Footer.jsx';
 import CartDrawer from './CartDrawer.jsx';
 import BottleSceneClient from './BottleSceneClient.jsx';
 import ScrollReveal from './ScrollReveal.jsx';
+import { getAllProducts } from '../../server/store.js';
 
-const API_ORIGIN = process.env.API_ORIGIN || 'http://localhost:3001';
-
-// Server Component: pide los productos en el servidor y filtra por género (SSR).
-async function getProducts() {
-  try {
-    const res = await fetch(`${API_ORIGIN}/api/products`, { cache: 'no-store' });
-    return res.ok ? res.json() : [];
-  } catch {
-    return [];
-  }
-}
-
-export default async function CollectionView({ gender, eyebrow, title, subtitle }) {
-  const all = await getProducts();
-  const products = all.filter((p) => p.gender === gender);
+// Server Component: consulta la BD directamente y filtra por género (SSR).
+export default function CollectionView({ gender, eyebrow, title, subtitle }) {
+  const products = getAllProducts().filter((p) => p.gender === gender);
 
   return (
     <>

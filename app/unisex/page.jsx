@@ -1,5 +1,7 @@
 import CollectionView from '../../src/components/CollectionView.jsx';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Perfumes Unisex',
   description: 'Fragancias unisex inspiradas en los íconos: versátiles, para cualquier piel y ocasión.',

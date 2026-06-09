@@ -1,5 +1,7 @@
 import CollectionView from '../../src/components/CollectionView.jsx';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Perfumes para Mujer',
   description: 'Fragancias femeninas inspiradas en los íconos: florales, dulces y elegantes. Réplicas de autor a tu alcance.',

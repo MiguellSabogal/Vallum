@@ -5,42 +5,47 @@ la landing se renderiza en el **servidor** (SSR), así Google recibe el HTML con
 productos y los `<meta>` ya dentro — a diferencia de la versión Vite (SPA), donde el
 HTML inicial era un `<div>` vacío.
 
-Es una **migración por fases** (patrón *strangler fig*): este proyecto consume el
-**mismo backend Express + SQLite** de `../vallum-react/server` mientras se migra la UI.
+Hecho con el patrón *strangler fig*: se levantó al lado de la versión Vita y, al
+consolidar la API dentro de Next, quedó **autosuficiente** (frontend + API + BD en
+un solo proyecto). La versión Vite (`../vallum-react`) ya se puede retirar.
 
-## Estado (Fase 1)
+## Estado
 
-✅ Landing pública con **SSR + metadata** (Hero, Marquee, Calidades, Catálogo, Footer)
-✅ Escena 3D (`dynamic` sin SSR), carrito y página de pago `/pago/[reference]`
-🔜 Fases siguientes: rutas por género (`/hombre`…), panel admin, y **consolidar la API
-   dentro de Next** (Route Handlers) para retirar Express y el frontend Vite.
+✅ Landing pública con **SSR + metadata**
+✅ Rutas por género (`/hombre`, `/mujer`, `/unisex`) y `/calidades`, cada una con su metadata
+✅ Carrito, checkout y página de pago `/pago/[reference]`
+✅ **Panel admin** (`/admin`) — productos y pedidos
+✅ **API consolidada en Route Handlers** (`app/api/*`) — auth JWT, productos, pedidos y pagos
+   con SQLite (better-sqlite3). Ya no hay servidor Express separado.
 
 ## Requisitos para correr
 
-Necesita el backend de `vallum-react` escuchando en `http://localhost:3001`:
+Autosuficiente: un solo comando.
 
 ```bash
-# Terminal 1 — backend (desde la carpeta hermana)
-cd ../vallum-react && npm run server
-
-# Terminal 2 — frontend Next
 cd vallum-next
 npm install
-npm run dev        # http://localhost:3000
+cp .env.example .env.local   # configura tus secretos
+npm run dev                  # http://localhost:3000  (web + API)
 ```
 
-- El **SSR** pide los productos a `API_ORIGIN` (por defecto `http://localhost:3001`).
-- Las llamadas del **navegador** a `/api/*` se reenvían al backend vía `next.config.js`
-  (`rewrites`), igual que el proxy de Vite.
+La SQLite se crea sola en `./vallum.db` y se siembra con 8 productos y el admin.
 
 ## Cómo se logra el SEO
 
-- `app/page.jsx` es un **Server Component**: hace `fetch` de los productos en el servidor
-  y los renderiza dentro del HTML.
-- `app/layout.jsx` exporta `metadata` (título, descripción, Open Graph) que Next inyecta
-  en el `<head>`.
+- `app/page.jsx` y las rutas de categoría son **Server Components**: consultan la BD en
+  el servidor y renderizan los productos dentro del HTML (marcados `dynamic` para reflejar
+  cambios del admin). Cada categoría tiene su propio `<title>`/`description`.
+- `app/layout.jsx` exporta `metadata` (Open Graph incluido) que Next inyecta en el `<head>`.
 - Los componentes interactivos (carrito, tarjetas, 3D) llevan `'use client'`; Next igual
-  los renderiza a HTML en el servidor y luego los **hidrata** en el navegador.
+  los renderiza a HTML en el servidor y luego los **hidrata**. (Lo que dependa de
+  `localStorage` se lee tras montar, no en el primer render, para no romper la hidratación.)
+
+## API (Route Handlers)
+
+`app/api/*` reutiliza `server/{db,auth,payments,store}.js`. Endpoints: `auth/login`,
+`auth/me`, `products` (+`/[id]`), `orders` (+`/[id]`, `/[id]/pay`, `/ref/[reference]`),
+`payments/webhook` y `payments/mock/[reference]`.
 
 ## Verificación rápida del SSR
 

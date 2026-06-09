@@ -1,5 +1,7 @@
 import CollectionView from '../../src/components/CollectionView.jsx';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Perfumes para Hombre',
   description: 'Fragancias masculinas inspiradas en los íconos: maderas, especias y carácter. Réplicas de autor con gran fijación.',

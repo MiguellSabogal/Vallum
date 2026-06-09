@@ -5,3 +5,6 @@ dist
 .env*.local
 .DS_Store
 *.log
+vallum.db
+vallum.db-shm
+vallum.db-wal
