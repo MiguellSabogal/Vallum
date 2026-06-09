@@ -5,7 +5,19 @@ import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from './env.js';
 
-export const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL;
+
+// SSL: los Postgres gestionados (Neon, Supabase, Vercel Postgres) lo EXIGEN; en
+// local no. Auto: activo salvo en localhost. Se puede forzar con DATABASE_SSL.
+function sslConfig() {
+  const flag = (process.env.DATABASE_SSL || '').toLowerCase();
+  if (flag === 'true' || flag === 'require') return { rejectUnauthorized: false };
+  if (flag === 'false' || flag === 'disable') return false;
+  const isLocal = /localhost|127\.0\.0\.1/.test(connectionString || '');
+  return isLocal ? false : { rejectUnauthorized: false };
+}
+
+export const pool = new pg.Pool({ connectionString, ssl: sslConfig() });
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (

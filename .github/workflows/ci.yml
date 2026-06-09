@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    # Valores dummy: el build importa los módulos del servidor, que validan estos
+    # secretos al cargar. No se conecta a la BD (las páginas con datos son dinámicas).
+    env:
+      JWT_SECRET: ci-dummy-secret
+      ADMIN_EMAIL: admin@ci.test
+      ADMIN_PASSWORD: ci-dummy-pass
+      PAYMENT_WEBHOOK_SECRET: ci-dummy-webhook
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
