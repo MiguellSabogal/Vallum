@@ -1,10 +1,13 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useCart } from '../context/CartContext.jsx';
 
 export default function Header() {
   const { count, setOpen } = useCart();
+  const pathname = usePathname();
+  const active = (href) => (pathname === href ? 'active' : undefined);
   const [navOpen, setNavOpen] = useState(false);
   const [bump, setBump] = useState(false);
   const firstRender = useRef(true);
@@ -22,10 +25,10 @@ export default function Header() {
       <div className="header-inner">
         <Link href="/" className="logo">VALLU<span>M</span></Link>
         <nav id="main-nav" className={navOpen ? 'open' : ''}>
-          <a href="#catalogo" onClick={() => setNavOpen(false)}>Hombre</a>
-          <a href="#catalogo" onClick={() => setNavOpen(false)}>Mujer</a>
-          <a href="#catalogo" onClick={() => setNavOpen(false)}>Unisex</a>
-          <a href="#calidades" onClick={() => setNavOpen(false)}>Calidades</a>
+          <Link href="/hombre" className={active('/hombre')} onClick={() => setNavOpen(false)}>Hombre</Link>
+          <Link href="/mujer" className={active('/mujer')} onClick={() => setNavOpen(false)}>Mujer</Link>
+          <Link href="/unisex" className={active('/unisex')} onClick={() => setNavOpen(false)}>Unisex</Link>
+          <Link href="/calidades" className={active('/calidades')} onClick={() => setNavOpen(false)}>Calidades</Link>
         </nav>
         <div className="header-actions">
           <button className="cart-btn" id="cart-toggle" aria-label="Carrito" onClick={() => setOpen(true)}>

@@ -10,20 +10,26 @@ function lineKey(id, quality) {
 }
 
 export function CartProvider({ children }) {
-  const [items, setItems] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      return Array.isArray(saved) ? saved : [];
-    } catch {
-      return [];
-    }
-  });
+  // Importante para SSR: el primer render es SIEMPRE vacío (igual en servidor y
+  // cliente, para que coincida la hidratación). El carrito de localStorage se
+  // carga después, en el efecto de abajo (solo corre en el navegador).
+  const [items, setItems] = useState([]);
+  const [hydrated, setHydrated] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // Persistencia: el carrito sobrevive a recargas
+  // Carga el carrito guardado tras montar (cliente).
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(saved) && saved.length) setItems(saved);
+    } catch { /* ignora */ }
+    setHydrated(true);
+  }, []);
+
+  // Persistencia: solo escribe una vez cargado, para no pisar el carrito guardado.
+  useEffect(() => {
+    if (hydrated) localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  }, [items, hydrated]);
 
   const addItem = useCallback((product, quality, price) => {
     setItems((prev) => {
