@@ -10,7 +10,8 @@ import { paginate } from '../lib/paginate.js';
 // Server Component: consulta la BD directamente y filtra por género (SSR).
 export default async function CollectionView({ gender, eyebrow, title, subtitle, searchParams }) {
   const all = await getAllProducts();
-  const filtered = all.filter((p) => p.gender === gender);
+  // Solo del género pedido y con stock (los agotados no se muestran en la tienda).
+  const filtered = all.filter((p) => p.gender === gender && p.stock > 0);
   const { items: products, page, totalPages, totalCount } = paginate(filtered, searchParams?.page);
 
   return (

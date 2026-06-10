@@ -9,3 +9,5 @@ dist
 vallum.db
 vallum.db-shm
 vallum.db-wal
+
+.vercel

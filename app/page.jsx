@@ -18,7 +18,9 @@ import { paginate } from '../src/lib/paginate.js';
 // llegan ya dentro del HTML → SEO.
 export default async function HomePage({ searchParams }) {
   const all = await getAllProducts();
-  const { items: products, page, totalPages, totalCount } = paginate(all, searchParams?.page);
+  // Solo productos con stock: los agotados no se muestran en la tienda.
+  const available = all.filter((p) => p.stock > 0);
+  const { items: products, page, totalPages, totalCount } = paginate(available, searchParams?.page);
 
   return (
     <>

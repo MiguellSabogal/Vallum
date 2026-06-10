@@ -26,15 +26,15 @@ body {
   overflow-x: hidden;
 }
 
-/* ── CANVAS 3D GLOBAL ────────────────────────────── */
-#global-canvas {
+/* ── FONDO GLOBAL (imagen fija) ──────────────────── */
+#global-bg {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: 0;
   pointer-events: none;
-  display: block;
+  background: url('/images/FondoPerfume.webp') center/cover no-repeat #1a1208;
 }
 
 /* ── SECCIONES COMPARTIDAS ───────────────────────── */
