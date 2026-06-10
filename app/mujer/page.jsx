@@ -7,9 +7,10 @@ export const metadata = {
   description: 'Fragancias femeninas inspiradas en los íconos: florales, dulces y elegantes. Réplicas de autor a tu alcance.',
 };
 
-export default function MujerPage() {
+export default function MujerPage({ searchParams }) {
   return (
     <CollectionView
+      searchParams={searchParams}
       gender="mujer"
       eyebrow="Colección · Mujer"
       title={<>Fragancias para <em>Ella</em></>}

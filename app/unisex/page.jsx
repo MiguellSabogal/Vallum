@@ -7,9 +7,10 @@ export const metadata = {
   description: 'Fragancias unisex inspiradas en los íconos: versátiles, para cualquier piel y ocasión.',
 };
 
-export default function UnisexPage() {
+export default function UnisexPage({ searchParams }) {
   return (
     <CollectionView
+      searchParams={searchParams}
       gender="unisex"
       eyebrow="Colección · Unisex"
       title={<>Fragancias <em>Unisex</em></>}

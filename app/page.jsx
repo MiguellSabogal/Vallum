@@ -12,10 +12,13 @@ import { getAllProducts } from '../server/store.js';
 // SSR por petición: refleja siempre el estado actual de la BD (cambios del admin).
 export const dynamic = 'force-dynamic';
 
+import { paginate } from '../src/lib/paginate.js';
+
 // Server Component: consulta la BD directamente (sin HTTP). Los productos
 // llegan ya dentro del HTML → SEO.
-export default async function HomePage() {
-  const products = await getAllProducts();
+export default async function HomePage({ searchParams }) {
+  const all = await getAllProducts();
+  const { items: products, page, totalPages, totalCount } = paginate(all, searchParams?.page);
 
   return (
     <>
@@ -24,10 +27,18 @@ export default async function HomePage() {
       <Hero />
       <Marquee />
       <Calidades />
-      <Catalog products={products} loading={false} error={null} />
+      <Catalog
+        products={products}
+        loading={false}
+        error={null}
+        page={page}
+        totalPages={totalPages}
+        totalCount={totalCount}
+        basePath="/"
+      />
       <Footer />
       <CartDrawer />
-      <ScrollReveal dep={products.length} />
+      <ScrollReveal dep={`${page}-${products.length}`} />
     </>
   );
 }

@@ -174,3 +174,29 @@
   .product-price { font-size: 1.4rem; }
   .add-cart-btn { font-size: 0.6rem; padding: 10px 12px; }
 }
+
+/* ── PAGINACIÓN ──────────────────────────────────── */
+.catalog-count {
+  margin-top: 2.2rem; text-align: center;
+  font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(26,26,26,0.5);
+}
+.pagination {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.4rem; margin-top: 1rem; flex-wrap: wrap;
+}
+.page-link {
+  display: flex; align-items: center; justify-content: center;
+  min-width: 42px; height: 42px; padding: 0 0.6rem;
+  border: 1px solid rgba(26,26,26,0.2);
+  color: var(--black); text-decoration: none;
+  font-size: 0.85rem; letter-spacing: 0.05em;
+  transition: all 0.25s;
+}
+.page-link:hover { background: var(--black); color: var(--snow); border-color: var(--black); }
+.page-link.is-active { background: var(--black); color: var(--gold); border-color: var(--black); pointer-events: none; }
+.page-link.is-disabled { opacity: 0.3; pointer-events: none; }
+.page-gap { padding: 0 0.3rem; color: rgba(26,26,26,0.4); }
+@media (max-width: 480px) {
+  .page-link { min-width: 36px; height: 36px; }
+}
