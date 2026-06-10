@@ -113,11 +113,18 @@ export async function placeOrder(customer, items) {
       }
 
       // Balas recargadas: catálogo fijo, precio del servidor, sin stock por producto.
-      const bala = BALAS[raw.productId];
+      // Id simple ("bala-50") o ligado a una fragancia ("bala-50:123").
+      const balaMatch = typeof raw.productId === 'string' && raw.productId.match(/^(bala-\d+)(?::(\d+))?$/);
+      const bala = balaMatch ? BALAS[balaMatch[1]] : null;
       if (bala) {
+        let productName = bala.name;
+        if (balaMatch[2]) {
+          const fr = await client.query('SELECT name, house FROM products WHERE id = $1', [Number(balaMatch[2])]);
+          if (fr.rows[0]) productName = `${bala.name} · ${fr.rows[0].name} (${fr.rows[0].house})`;
+        }
         const lineTotal = bala.price * qty;
         total += lineTotal;
-        lines.push({ productId: null, productName: bala.name, quality: bala.size, unitPrice: bala.price, qty, lineTotal });
+        lines.push({ productId: null, productName, quality: bala.size, unitPrice: bala.price, qty, lineTotal });
         continue;
       }
 

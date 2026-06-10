@@ -11,6 +11,7 @@ import '../src/styles/footer.css';
 import '../src/styles/cart.css';
 import '../src/styles/payment.css';
 import '../src/styles/admin.css';
+import '../src/styles/legal.css';
 
 // Metadata por defecto del sitio (Next la inyecta en el <head> server-side).
 export const metadata = {

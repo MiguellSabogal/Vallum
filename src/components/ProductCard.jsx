@@ -3,19 +3,29 @@ import { useRef, useState } from 'react';
 import { useCart } from '../context/CartContext.jsx';
 import { fmt } from '../utils/format.js';
 import BottleSvg from './BottleSvg.jsx';
+import { BALAS } from '../lib/balas.js';
+
+// Presentaciones: frasco en dos calidades, o bala recargada (precio fijo).
+const PRESENTACIONES = [
+  { key: 'AA', label: 'AA' },
+  { key: 'AAA', label: 'AAA' },
+  { key: 'bala-50', label: 'Bala 50ml' },
+  { key: 'bala-100', label: 'Bala 100ml' },
+];
 
 export default function ProductCard({ product: p }) {
   const { addItem } = useCart();
-  const [quality, setQuality] = useState('AAA');
+  const [pres, setPres] = useState('AAA');
   const [added, setAdded] = useState(false);
   const priceRef = useRef(null);
   const addTimer = useRef(null);
 
-  const price = quality === 'AAA' ? p.priceAAA : p.priceAA;
+  const bala = BALAS[pres];
+  const price = bala ? bala.price : pres === 'AAA' ? p.priceAAA : p.priceAA;
 
-  function selectQuality(q) {
-    if (q === quality) return;
-    setQuality(q);
+  function selectPres(k) {
+    if (k === pres) return;
+    setPres(k);
     // Pulso de escala en el precio, igual que la version vanilla
     const el = priceRef.current;
     if (el) {
@@ -27,7 +37,12 @@ export default function ProductCard({ product: p }) {
 
   function handleAdd(e) {
     e.stopPropagation();
-    addItem(p, quality, price);
+    if (bala) {
+      // Línea de bala ligada a esta fragancia: el id compuesto lo resuelve el servidor.
+      addItem({ ...p, id: `${bala.id}:${p.id}` }, bala.size, bala.price);
+    } else {
+      addItem(p, pres, price);
+    }
     setAdded(true);
     clearTimeout(addTimer.current);
     addTimer.current = setTimeout(() => setAdded(false), 1400);
@@ -58,16 +73,15 @@ export default function ProductCard({ product: p }) {
           <span className="review-count">({p.reviewCount})</span>
         </div>
         <div className="quality-selector">
-          <div className="quality-label">Calidad</div>
+          <div className="quality-label">Presentación</div>
           <div className="quality-btns">
-            <button
-              className={`quality-btn${quality === 'AA' ? ' active' : ''}`}
-              onClick={() => selectQuality('AA')}
-            >AA</button>
-            <button
-              className={`quality-btn${quality === 'AAA' ? ' active' : ''}`}
-              onClick={() => selectQuality('AAA')}
-            >AAA</button>
+            {PRESENTACIONES.map((o) => (
+              <button
+                key={o.key}
+                className={`quality-btn${pres === o.key ? ' active' : ''}`}
+                onClick={() => selectPres(o.key)}
+              >{o.label}</button>
+            ))}
           </div>
         </div>
         <div className="product-footer">
