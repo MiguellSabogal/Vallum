@@ -1,3 +1,5 @@
+import Balas from './Balas.jsx';
+
 function StatRow({ label, width, value }) {
   return (
     <div className="stat-row">
@@ -65,6 +67,8 @@ export default function Calidades({ topPad = false }) {
           </div>
 
         </div>
+
+        <Balas />
       </div>
     </section>
   );

@@ -2,6 +2,7 @@
 // handlers y Server Components solo llaman a estas funciones.
 import crypto from 'node:crypto';
 import { pool, ready } from './db.js';
+import { BALAS } from '../src/lib/balas.js';
 
 export function toClient(row) {
   return { ...row, isNew: !!row.isNew };
@@ -106,10 +107,23 @@ export async function placeOrder(customer, items) {
     const lines = [];
 
     for (const raw of items) {
+      const qty = Math.floor(Number(raw.qty));
+      if (!Number.isFinite(qty) || qty < 1) {
+        throw { status: 400, error: 'Ítem de pedido inválido.' };
+      }
+
+      // Balas recargadas: catálogo fijo, precio del servidor, sin stock por producto.
+      const bala = BALAS[raw.productId];
+      if (bala) {
+        const lineTotal = bala.price * qty;
+        total += lineTotal;
+        lines.push({ productId: null, productName: bala.name, quality: bala.size, unitPrice: bala.price, qty, lineTotal });
+        continue;
+      }
+
       const productId = Number(raw.productId);
       const quality = raw.quality === 'AA' ? 'AA' : 'AAA';
-      const qty = Math.floor(Number(raw.qty));
-      if (!productId || !Number.isFinite(qty) || qty < 1) {
+      if (!productId) {
         throw { status: 400, error: 'Ítem de pedido inválido.' };
       }
       const { rows } = await client.query('SELECT * FROM products WHERE id = $1 FOR UPDATE', [productId]);
@@ -136,7 +150,9 @@ export async function placeOrder(customer, items) {
          VALUES ($1,$2,$3,$4,$5,$6,$7)`,
         [orderId, l.productId, l.productName, l.quality, l.unitPrice, l.qty, l.lineTotal]
       );
-      await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [l.qty, l.productId]);
+      if (l.productId !== null) {
+        await client.query('UPDATE products SET stock = stock - $1 WHERE id = $2', [l.qty, l.productId]);
+      }
     }
 
     await client.query('COMMIT');
