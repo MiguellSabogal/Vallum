@@ -21,6 +21,11 @@
   display: flex; flex-direction: column;
   overflow: hidden;
   transition: all 0.3s;
+  /* El navegador omite el render/layout de las tarjetas fuera de pantalla
+     (clave con cientos de productos). contain-intrinsic-size reserva su alto
+     aproximado para que la barra de scroll no salte. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
 }
 .product-card:hover { background: var(--black); }
 .product-card:hover .product-name { color: var(--snow); }

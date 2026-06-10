@@ -13,9 +13,15 @@ export default function BottleScene() {
 
     let W = window.innerWidth, H = window.innerHeight;
 
+    // Accesibilidad + rendimiento: si el usuario pide menos movimiento, la escena
+    // se muestra estática (un solo frame, sin bucle de animación).
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     // ── RENDERER ──────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // pixelRatio 2 en pantallas retina = 4× los píxeles a renderar. 1.5 baja mucho
+    // la carga de GPU sin notarse en una escena suave/translúcida como esta.
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.setSize(W, H);
     renderer.physicallyCorrectLights = true;
     renderer.outputEncoding = THREE.sRGBEncoding;
@@ -220,6 +226,12 @@ export default function BottleScene() {
     let rafId;
     function tick() {
       rafId = requestAnimationFrame(tick);
+
+      // Pausa el trabajo pesado (render + partículas) cuando el héroe ya no se ve
+      // —el usuario está leyendo el catálogo, que tapa el canvas— o la pestaña está
+      // oculta. Aquí es donde se recupera la mayor parte de los FPS al hacer scroll.
+      if (document.hidden || scrollY > H * 1.1) return;
+
       t += 0.012;
 
       const totalH = document.body.scrollHeight - window.innerHeight;
@@ -276,7 +288,9 @@ export default function BottleScene() {
 
       renderer.render(scene, camera);
     }
-    tick();
+
+    renderer.render(scene, camera); // primer frame inmediato (nunca queda en blanco)
+    if (!reduceMotion) tick();      // y si hay movimiento, arranca el bucle (con su freno)
 
     // ── CLEANUP ───────────────────────────────────────────
     return () => {

@@ -40,7 +40,7 @@ export default function ProductCard({ product: p }) {
     <div className="product-card" data-id={p.id}>
       {p.isNew ? <span className="new-badge">Nuevo</span> : null}
       {p.imageUrl ? (
-        <img src={p.imageUrl} alt={p.name} className="product-visual" />
+        <img src={p.imageUrl} alt={p.name} className="product-visual" loading="lazy" decoding="async" />
       ) : (
         <div className="product-visual-placeholder" style={{ background: p.colorBg }}>
           <span className="perfume-name-bg" style={{ color: p.colorText }}>{p.name}</span>

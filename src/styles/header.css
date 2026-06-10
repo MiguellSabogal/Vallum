@@ -11,8 +11,8 @@ header::before {
   content: '';
   position: absolute; inset: 0;
   background: rgba(69, 69, 69, 0.82);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: -1;
 }
 .header-inner {
