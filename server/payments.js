@@ -3,7 +3,7 @@
 // processWebhook (firma, idempotencia, monto, restock) no cambia.
 import crypto from 'node:crypto';
 import { pool, ready } from './db.js';
-import { PAYMENT_WEBHOOK_SECRET } from './env.js';
+import { PAYMENT_PROVIDER, PAYMENT_WEBHOOK_SECRET } from './env.js';
 
 export function sign(rawString) {
   return crypto.createHmac('sha256', PAYMENT_WEBHOOK_SECRET).update(rawString).digest('hex');
@@ -15,9 +15,22 @@ function verifySignature(rawString, signature) {
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 }
 
-// Inicia un pago para un pedido. En mock, devuelve la URL de nuestra pasarela simulada.
+// Inicia un pago para un pedido según el proveedor activo.
+// - contraentrega: no hay pasarela; el pedido queda confirmado y se paga al recibir.
+// - mock (pago online, para el futuro): devuelve la URL de nuestra pasarela simulada.
+//   Cambiar a Wompi/Mercado Pago = reemplazar solo la rama mock.
 export async function createPayment(order) {
   await ready();
+
+  if (PAYMENT_PROVIDER === 'contraentrega') {
+    const paymentId = `COD-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
+    await pool.query(
+      `UPDATE orders SET "paymentId" = $1, "paymentMethod" = 'contraentrega', "paymentStatus" = 'contraentrega' WHERE id = $2`,
+      [paymentId, order.id]
+    );
+    return { paymentId, checkoutUrl: `/pago/${order.reference}` };
+  }
+
   const paymentId = `MOCK-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
   await pool.query(`UPDATE orders SET "paymentId" = $1, "paymentStatus" = 'pendiente' WHERE id = $2`, [paymentId, order.id]);
   return { paymentId, checkoutUrl: `/pago/${order.reference}` };

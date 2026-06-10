@@ -200,7 +200,7 @@ export async function updateOrderStatus(id, status) {
 
 export async function getOrderByRef(reference) {
   await ready();
-  const { rows } = await pool.query('SELECT reference, total, status, "paymentStatus" FROM orders WHERE reference = $1', [reference]);
+  const { rows } = await pool.query('SELECT reference, total, status, "paymentStatus", "paymentMethod" FROM orders WHERE reference = $1', [reference]);
   return rows[0] || null;
 }
 

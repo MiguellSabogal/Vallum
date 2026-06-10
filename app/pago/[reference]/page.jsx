@@ -16,7 +16,9 @@ export default function PaymentPage({ params }) {
     getOrderByRef(reference)
       .then((o) => {
         setOrder(o);
-        if (o.paymentStatus === 'aprobado' || o.paymentStatus === 'rechazado') {
+        if (o.paymentMethod === 'contraentrega') {
+          setResult('contraentrega');
+        } else if (o.paymentStatus === 'aprobado' || o.paymentStatus === 'rechazado') {
           setResult(o.paymentStatus);
         }
       })
@@ -46,6 +48,18 @@ export default function PaymentPage({ params }) {
           <p className="pay-muted">Cargando…</p>
         ) : error && !order ? (
           <p className="pay-error">{error}</p>
+        ) : result === 'contraentrega' ? (
+          <>
+            <div className="pay-icon pay-icon-ok">✓</div>
+            <h1>¡Pedido confirmado!</h1>
+            <p className="pay-muted">
+              Tu pedido <strong>{reference}</strong> quedó registrado con pago
+              <strong> contraentrega</strong>: pagas {order ? fmt(order.total) : ''} en
+              efectivo al recibirlo en tu dirección en Bogotá. Te contactaremos por
+              WhatsApp para coordinar la entrega.
+            </p>
+            <Link href="/" className="pay-btn pay-btn-primary">Volver a la tienda</Link>
+          </>
         ) : result === 'aprobado' ? (
           <>
             <div className="pay-icon pay-icon-ok">✓</div>

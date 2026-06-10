@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext.jsx';
 import { fmt, initials } from '../utils/format.js';
 import { createOrder, initiatePayment } from '../api/orders.js';
 
-const EMPTY_CUSTOMER = { name: '', email: '', phone: '', address: '', city: '', notes: '' };
+const EMPTY_CUSTOMER = { name: '', email: '', phone: '', address: '', city: 'Bogotá', notes: '' };
 
 export default function CartDrawer() {
   const { items, total, count, open, setOpen, changeQty, removeItem, clear } = useCart();
@@ -99,7 +99,11 @@ export default function CartDrawer() {
             {error && <p className="checkout-error">{error}</p>}
 
             <div className="cart-foot">
-              <div className="cart-total"><span>Total a pagar</span><span>{fmt(total)}</span></div>
+              <p className="checkout-payinfo">
+                💵 <strong>Pago contraentrega:</strong> pagas en efectivo al recibir tu
+                pedido. Envíos únicamente en Bogotá.
+              </p>
+              <div className="cart-total"><span>Total a pagar al recibir</span><span>{fmt(total)}</span></div>
               <button type="submit" className="cart-checkout" disabled={submitting}>
                 {submitting ? 'Procesando…' : 'Confirmar pedido'}
               </button>
