@@ -1,4 +1,4 @@
-import { put, del } from '@vercel/blob';
+import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -12,16 +12,14 @@ export async function POST(request) {
 
     const bytes = await file.arrayBuffer();
 
-    // Intenta eliminar el archivo viejo si existe
-    try {
-      await del(file.name);
-    } catch (e) {
-      // Ignora si no existe
-    }
+    // Extrae nombre sin extensión y crea nombre único
+    const nameWithoutExt = file.name.slice(0, -5); // quita .webp
+    const timestamp = Date.now();
+    const uniqueName = `${nameWithoutExt}-${timestamp}.webp`;
 
-    const blob = await put(file.name, Buffer.from(bytes), { access: 'private', contentType: 'image/webp' });
+    const blob = await put(uniqueName, Buffer.from(bytes), { access: 'private', contentType: 'image/webp' });
 
-    return NextResponse.json({ url: blob.url });
+    return NextResponse.json({ url: blob.url, filename: uniqueName });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
