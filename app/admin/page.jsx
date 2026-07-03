@@ -229,8 +229,23 @@ export default function Admin() {
           <label className="admin-field"><span>Color del frasco/texto</span>
             <input type="color" value={form.colorText} onChange={(e) => setField('colorText', e.target.value)} />
           </label>
-          <label className="admin-field"><span>URL de la imagen</span>
-            <input type="url" value={form.imageUrl} onChange={(e) => setField('imageUrl', e.target.value)} placeholder="https://ejemplo.com/imagen.jpg" />
+          <label className="admin-field"><span>Imagen (.webp)</span>
+            <input
+              type="file"
+              accept=".webp,image/webp"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (!file.name.endsWith('.webp')) { alert('Solo archivos .webp'); return; }
+                const fd = new FormData(); fd.append('file', file);
+                try {
+                  const r = await fetch('/api/upload', { method: 'POST', body: fd });
+                  const d = await r.json();
+                  if (d.error) { alert('Error: ' + d.error); return; }
+                  setField('imageUrl', d.url);
+                } catch (ex) { alert('Fallo al subir: ' + ex.message); }
+              }}
+            />
           </label>
 
           {form.imageUrl && (
