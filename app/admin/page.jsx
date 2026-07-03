@@ -242,7 +242,9 @@ export default function Admin() {
                   const r = await fetch('/api/upload', { method: 'POST', body: fd });
                   const d = await r.json();
                   if (d.error) { alert('Error: ' + d.error); return; }
-                  setField('imageUrl', d.url);
+                  // Guarda la URL del proxy en lugar de la URL directa del Blob
+                  const fname = file.name;
+                  setField('imageUrl', `/api/blob/${fname}`);
                 } catch (ex) { alert('Fallo al subir: ' + ex.message); }
               }}
             />
