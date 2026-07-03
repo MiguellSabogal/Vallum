@@ -1,4 +1,4 @@
-import { put } from '@vercel/blob';
+import { put, del } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -11,7 +11,15 @@ export async function POST(request) {
     if (!file.name.endsWith('.webp')) return NextResponse.json({ error: 'Solo .webp' }, { status: 400 });
 
     const bytes = await file.arrayBuffer();
-    const blob = await put(file.name, Buffer.from(bytes), { access: 'private', contentType: 'image/webp', allowOverwrite: true });
+
+    // Intenta eliminar el archivo viejo si existe
+    try {
+      await del(file.name);
+    } catch (e) {
+      // Ignora si no existe
+    }
+
+    const blob = await put(file.name, Buffer.from(bytes), { access: 'private', contentType: 'image/webp' });
 
     return NextResponse.json({ url: blob.url });
   } catch (e) {
