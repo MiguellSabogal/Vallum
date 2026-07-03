@@ -25,12 +25,20 @@ export default function Admin() {
   const [msg, setMsg] = useState('');
   const [error, setError] = useState('');
   const [tab, setTab] = useState('productos'); // 'productos' | 'pedidos'
+  const [catalogImages, setCatalogImages] = useState([]);
 
   function loadProducts() {
     getProducts().then(setProducts).catch((e) => setError(e.message));
   }
 
-  useEffect(() => { loadProducts(); }, []);
+  function loadCatalogImages() {
+    fetch('/api/catalog-images')
+      .then(r => r.json())
+      .then(d => setCatalogImages(d.images || []))
+      .catch(e => console.error('Error loading catalog images:', e));
+  }
+
+  useEffect(() => { loadProducts(); loadCatalogImages(); }, []);
 
   // Carga el token guardado tras montar (cliente).
   useEffect(() => { setToken(localStorage.getItem('vallum_token') || ''); }, []);
@@ -230,23 +238,17 @@ export default function Admin() {
             <input type="color" value={form.colorText} onChange={(e) => setField('colorText', e.target.value)} />
           </label>
           <label className="admin-field"><span>Imagen (.webp)</span>
-            <input
-              type="file"
-              accept=".webp,image/webp"
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                if (!file.name.endsWith('.webp')) { alert('Solo archivos .webp'); return; }
-                const fd = new FormData(); fd.append('file', file);
-                try {
-                  const r = await fetch('/api/upload', { method: 'POST', body: fd });
-                  const d = await r.json();
-                  if (d.error) { alert('Error: ' + d.error); return; }
-                  // Usa el filename único que devuelve el servidor
-                  setField('imageUrl', `/api/blob/${d.filename}`);
-                } catch (ex) { alert('Fallo al subir: ' + ex.message); }
-              }}
-            />
+            <select
+              value={form.imageUrl}
+              onChange={(e) => setField('imageUrl', e.target.value)}
+            >
+              <option value="">-- Selecciona una imagen --</option>
+              {catalogImages.map(img => (
+                <option key={img} value={`/catalogo/${img}`}>
+                  {img}
+                </option>
+              ))}
+            </select>
           </label>
 
           {form.imageUrl && (
