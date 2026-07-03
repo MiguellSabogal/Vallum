@@ -1,6 +1,4 @@
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -13,14 +11,9 @@ export async function POST(request) {
     if (!file.name.endsWith('.webp')) return NextResponse.json({ error: 'Solo .webp' }, { status: 400 });
 
     const bytes = await file.arrayBuffer();
-    const dir = join(process.cwd(), 'public', 'catalogo');
-    if (!existsSync(dir)) await mkdir(dir, { recursive: true });
+    const blob = await put(file.name, bytes, { access: 'public' });
 
-    const fname = file.name;
-    const path = join(dir, fname);
-    await writeFile(path, Buffer.from(bytes));
-
-    return NextResponse.json({ url: `/catalogo/${fname}` });
+    return NextResponse.json({ url: blob.url });
   } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
