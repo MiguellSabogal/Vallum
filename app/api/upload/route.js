@@ -11,7 +11,7 @@ export async function POST(request) {
     if (!file.name.endsWith('.webp')) return NextResponse.json({ error: 'Solo .webp' }, { status: 400 });
 
     const bytes = await file.arrayBuffer();
-    const blob = await put(file.name, bytes);
+    const blob = await put(file.name, Buffer.from(bytes), { contentType: 'image/webp' });
 
     return NextResponse.json({ url: blob.url });
   } catch (e) {
